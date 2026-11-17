@@ -1,11 +1,33 @@
-// GameState: player progress (name, current node, visited nodes); only GameEngine may change it
-//
-// GameState(mutable progress)
-// - String playerName
-// - String currentNodeId
-// - List<String> history
-// + GameState(String playerName, String startNodeId)
-// + String getPlayerName()
-// + String getCurrentNodeId()
-// + List<String> getHistory()
-// + void moveTo(String nodeId)// package-private; only the engine calls it
+import java.util.ArrayList;
+import java.util.List;
+
+public class GameState {
+    private String playerName;
+    private String currentNodeId;
+    private List<String> history;
+
+    public GameState(String playerName, String currentNodeId){
+        this.playerName = playerName;
+        this.currentNodeId = currentNodeId;
+        this.history = new ArrayList<>();
+        this.history.add(currentNodeId);
+    }
+
+    public String getPlayerName(){
+        return this.playerName;
+    }
+
+    public String getCurrentNodeId(){
+        return this.currentNodeId;
+    }
+
+    public List<String> getHistory(){
+        return this.history;
+    }
+
+    void moveTo(String nodeId){
+        this.currentNodeId = nodeId;
+        this.history.add(nodeId);
+    }
+
+}
