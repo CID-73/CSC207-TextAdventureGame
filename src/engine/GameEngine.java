@@ -4,20 +4,25 @@
 // - Story story
 // - GameState state
 // + StoryNode getCurrentNode()
+// + String getTitle()
+// + String getPlayerName()
+// + String getDescription()
+// + List<ChoiceView> getChoices()
 // + void choose(int choiceIndex)
 // + boolean isOver()
-// GameEngine: implements Game and enforces the game rules; does no input or output
 package engine;
 
-import java.util.List;
+import api.ChoiceView;
+import api.Game;
 
-// import api.Game;   // add this once a teammate writes the Game interface
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Runs the game: keeps track of where the player is and moves them
  * when they pick a choice. Does no input or output (that's the UI's job).
  */
-public class GameEngine /* implements Game */ {
+public class GameEngine implements Game {
 
     // Attributes
     private final Story story;
@@ -42,6 +47,45 @@ public class GameEngine /* implements Game */ {
     }
 
     /**
+     * @return the title of the story being played.
+     */
+    @Override
+    public String getTitle() {
+        return story.getTitle();
+    }
+
+    /**
+     * @return the player's name.
+     */
+    @Override
+    public String getPlayerName() {
+        return state.getPlayerName();
+    }
+
+    /**
+     * @return the description of the current scene.
+     */
+    @Override
+    public String getDescription() {
+        return getCurrentNode().getDescription();
+    }
+
+    /**
+     * Turns the current scene's choices into ChoiceViews,
+     * so the UI only sees the text, not the target node IDs.
+     *
+     * @return the current choices; an empty list when the game is over.
+     */
+    @Override
+    public List<ChoiceView> getChoices() {
+        List<ChoiceView> views = new ArrayList<>();
+        for (Choice choice : getCurrentNode().getChoices()) {
+            views.add(new ChoiceView(choice.getText()));
+        }
+        return views;
+    }
+
+    /**
      * Moves the player along the choice they picked.
      *
      * @param choiceIndex which choice was picked (0 = first choice)
@@ -49,6 +93,7 @@ public class GameEngine /* implements Game */ {
      *                                  or the chosen scene hasn't been written yet
      * @throws IllegalArgumentException if choiceIndex is not a valid choice
      */
+    @Override
     public void choose(int choiceIndex) {
         if (isOver()) {
             throw new IllegalStateException("The game is over; no more choices can be made");
@@ -73,6 +118,7 @@ public class GameEngine /* implements Game */ {
     /**
      * @return true if the player has reached an ending.
      */
+    @Override
     public boolean isOver() {
         return getCurrentNode().isEnding();
     }
